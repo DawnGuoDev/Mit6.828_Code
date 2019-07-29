@@ -57,12 +57,9 @@ trap(struct trapframe *tf)
     // hw5 alarmhandler
     if(myproc() != 0 && (tf->cs &3) == 3){
       struct proc *p = myproc();
-      p->tickspassed ++;  // ticks need ++
-      if(p->tickspassed >= p->alarmticks){// the passed ticks more and equal the ticks user set
-        p->tickspassed = 0;
-        tf->esp -= 4; 
-        (*(uint *)(tf->esp)) = tf->eip; // resume where it left off
-        tf->eip = (uint)p->alarmhandler;  // handler
+      p->tickspassed ++;
+      if(p->tickspassed >= p->ticks){
+        p->alarmhandler();
       }     
     }
     if(cpuid() == 0){

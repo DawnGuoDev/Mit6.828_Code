@@ -114,12 +114,11 @@ int sys_alarm(void){
     return -1;
   }
 
-  if(argptr(1, (char **)&handler, 1) < 0){
+  if(argptr(1, (char **)&hanler, 1) < 0){
     return  -1;
   }  
   myproc()->alarmticks = ticks;
   myproc()->alarmhandler = handler;
-  return 0;
 } 
 
 

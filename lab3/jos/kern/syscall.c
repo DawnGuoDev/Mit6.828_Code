@@ -1,4 +1,4 @@
-/* See COPYRIGHT for copyright information. */
+/* See COPYRIGHT for copyright informytion. */
 
 #include <inc/x86.h>
 #include <inc/error.h>
@@ -20,8 +20,8 @@ sys_cputs(const char *s, size_t len)
 	// Check that the user has permission to read memory [s, s+len).
 	// Destroy the environment if not.
 
-	// LAB 3: Your code here.
-
+	// LAB 3: Your code here.part B
+  user_mem_assert(curenv, s, len, 0);
 	// Print the string supplied by the user.
 	cprintf("%.*s", len, s);
 }
@@ -69,11 +69,24 @@ syscall(uint32_t syscallno, uint32_t a1, uint32_t a2, uint32_t a3, uint32_t a4, 
 	// Call the function corresponding to the 'syscallno' parameter.
 	// Return any appropriate return value.
 	// LAB 3: Your code here.
+	// panic("syscall not implemented");
+  int re ;
 
-	panic("syscall not implemented");
-
+  
 	switch (syscallno) {
-	default:
+  case SYS_cputs:
+    sys_cputs((const char *)a1, (size_t)a2);
+    return 0;
+  case SYS_cgetc:
+    re = sys_cgetc();
+    return (int32_t)re;
+  case SYS_getenvid:
+    re = sys_getenvid();
+    return (int32_t)re;
+  case SYS_env_destroy:
+    re = sys_env_destroy((uint32_t)a1);
+    return (int32_t)re;  	
+  default:
 		return -E_INVAL;
 	}
 }

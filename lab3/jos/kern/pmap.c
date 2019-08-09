@@ -599,7 +599,21 @@ int
 user_mem_check(struct Env *env, const void *va, size_t len, int perm)
 {
 	// LAB 3: Your code here.
+  uint32_t start = ROUNDDOWN((uint32_t)va, PGSIZE); // page begin address
+  uint32_t end = ROUNDUP((uint32_t)va+len, PGSIZE); // page end address
+  pte_t *pte = NULL;  // page table entry
+  
 
+  for(; start < end; start += PGSIZE ){
+    pte = pgdir_walk(env->env_pgdir,(void *)start, 0);
+    // address need below ULIM && pte is not NULL
+    if((uint32_t)ULIM < (uint32_t)start || pte == NULL || ((*pte & perm) != perm) || !(*pte & PTE_P)){
+      // user_mem_check_addr =  start < (uint32_t)va ? start : (uint32_t)va;
+      user_mem_check_addr = start < (uint32_t)va ? (uint32_t)va : start;
+      return -E_FAULT;
+    }
+  }
+  
 	return 0;
 }
 

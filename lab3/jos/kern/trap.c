@@ -182,15 +182,45 @@ trap_dispatch(struct Trapframe *tf)
 {
 	// Handle processor exceptions.
 	// LAB 3: Your code here.
+  struct PushRegs *regs = &(tf->tf_regs);
+  int32_t re ;
 
-	// Unexpected trap: The user process or the kernel has a bug.
-	print_trapframe(tf);
-	if (tf->tf_cs == GD_KT)
-		panic("unhandled trap in kernel");
-	else {
-		env_destroy(curenv);
-		return;
-	}
+  switch(tf->tf_trapno){
+  case T_BRKPT:
+    monitor(tf);
+    break;
+  case T_SYSCALL:
+    re = syscall(regs->reg_eax, regs->reg_edx, regs->reg_ecx, regs->reg_ebx, regs->reg_edi, regs->reg_esi);
+    regs->reg_eax = re;
+    break;
+  case T_PGFLT:
+    page_fault_handler(tf);
+    break;
+  default:
+	  // Unexpected trap: The user process or the kernel has a bug.
+	  print_trapframe(tf);
+	  if (tf->tf_cs == GD_KT)
+		  panic("unhandled trap in kernel");
+	  else {
+		  env_destroy(curenv);
+		  return;
+  	}
+  }
+  /*
+  if(tf->tf_trapno == T_BRKPT){
+    monitor(tf);
+  }else if(tf->tf_trapno == T_PGFLT){
+    page_fault_handler(tf);
+  }else{
+	  // Unexpected trap: The user process or the kernel has a bug.
+	  print_trapframe(tf);
+	  if (tf->tf_cs == GD_KT)
+		  panic("unhandled trap in kernel");
+	  else {
+		  env_destroy(curenv);
+		  return;
+  	}
+  }*/
 }
 
 void
@@ -243,7 +273,10 @@ page_fault_handler(struct Trapframe *tf)
 	// Handle kernel-mode page faults.
 
 	// LAB 3: Your code here.
-
+  // user mode is 3, kernel mode is 0
+  if(!(tf->tf_cs & 0x03)){
+    panic("page fault in kernel mode");
+  }
 	// We've already handled kernel-mode exceptions, so if we get here,
 	// the page fault happened in user mode.
 

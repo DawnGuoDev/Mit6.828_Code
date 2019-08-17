@@ -1,0 +1,3 @@
++ ld obj/kern/kernel
++ mk obj/kern/kernel.img
+qemu: terminating on signal 2

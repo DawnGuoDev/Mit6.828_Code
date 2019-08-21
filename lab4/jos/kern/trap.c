@@ -91,7 +91,16 @@ trap_init(void)
   void mchk_handler();
   void simderr_handler();
   void syscall_handler();
-
+  
+  // LAB 4: Preemptive Multitasking
+  void irq_timer_handler();
+  void irq_kbd_handler();
+  void irq_serial_handler();
+  void irq_spurious_handler();
+  void irq_ide_handler();
+  void irq_error_handler();
+  
+  // LAB 3:
   SETGATE(idt[T_DIVIDE], 0, GD_KT, divide_handler, 0); 
   SETGATE(idt[T_DEBUG], 0, GD_KT, debug_handler, 0);
   SETGATE(idt[T_NMI], 0, GD_KT, nmi_handler, 0);
@@ -111,7 +120,17 @@ trap_init(void)
   SETGATE(idt[T_MCHK], 0, GD_KT, mchk_handler, 0);
   SETGATE(idt[T_SIMDERR], 0, GD_KT, simderr_handler, 0);
   SETGATE(idt[T_SYSCALL], 0, GD_KT, syscall_handler, 3);
-	// Per-CPU setup 
+	
+  // LAB 4: Preemptive Multitasking
+  SETGATE(idt[IRQ_OFFSET + IRQ_TIMER], 0, GD_KT, irq_timer_handler, 3);
+  SETGATE(idt[IRQ_OFFSET + IRQ_KBD], 0, GD_KT, irq_kbd_handler, 3);
+  SETGATE(idt[IRQ_OFFSET + IRQ_SERIAL], 0, GD_KT, irq_serial_handler, 3);
+  SETGATE(idt[IRQ_OFFSET + IRQ_SPURIOUS], 0, GD_KT, irq_spurious_handler, 3);
+  SETGATE(idt[IRQ_OFFSET + IRQ_IDE], 0, GD_KT, irq_ide_handler, 3);
+  SETGATE(idt[IRQ_OFFSET + IRQ_ERROR], 0, GD_KT, irq_error_handler, 3);
+  
+  
+  // Per-CPU setup 
 	trap_init_percpu();
 }
 
@@ -246,7 +265,10 @@ trap_dispatch(struct Trapframe *tf)
 	// Handle clock interrupts. Don't forget to acknowledge the
 	// interrupt using lapic_eoi() before calling the scheduler!
 	// LAB 4: Your code here.
-
+  if(tf->tf_trapno == IRQ_OFFSET + IRQ_TIMER){
+    lapic_eoi();
+    sched_yield();
+  }
 	// Unexpected trap: The user process or the kernel has a bug.
 	print_trapframe(tf);
 	if (tf->tf_cs == GD_KT)
@@ -367,7 +389,7 @@ page_fault_handler(struct Trapframe *tf)
 
 	// LAB 4: Your code here.
   if(curenv->env_pgfault_upcall){
-      if(tf->tf_esp > UXSTACKTOP - PGSIZE && tf->tf_esp < UXSTACKTOP){
+      if(tf->tf_esp >= UXSTACKTOP - PGSIZE && tf->tf_esp < UXSTACKTOP){
         utf = (struct UTrapframe *)(tf->tf_esp-4-sizeof(struct UTrapframe)); 
       }else{
         utf = (struct UTrapframe *)(UXSTACKTOP - sizeof(struct UTrapframe));
@@ -385,7 +407,6 @@ page_fault_handler(struct Trapframe *tf)
       
       env_run(curenv);
   }	
-
 
   // Destroy the environment that caused the fault.
 	cprintf("[%08x] user fault va %08x ip %08x\n",

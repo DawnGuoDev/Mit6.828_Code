@@ -1,0 +1,51 @@
++ ld obj/kern/kernel
++ mk obj/kern/kernel.img
+6828 decimal is 015254 octal!
+Physical memory: 131072K available, base = 640K, extended = 130432K
+need boot_alloc:0x1000 bytes	      nextfree:0xf0255000
+kern_pddir 0xf0255000
+need boot_alloc:0x40000 bytes	      nextfree:0xf0256000
+need boot_alloc:0x1f000 bytes	      nextfree:0xf0296000
+need boot_alloc:0x0 bytes	      nextfree:0xf02b5000
+need boot_alloc:0x0 bytes	      nextfree:0xf02b5000
+check_page_free_list() succeeded!
+check_page_alloc() succeeded!
+check_page() succeeded!
+boot_map_region UPAGES SUCCESS
+boot_map_region bootstack SUCCESS
+boot_map_region KERNBASE SUCCESS
+check_kern_pgdir() succeeded!
+need boot_alloc:0x0 bytes	      nextfree:0xf02b5000
+check_page_free_list() succeeded!
+check_page_installed_pgdir() succeeded!
+SMP: CPU 0 found 1 CPU(s)
+enabled interrupts: 1 2 4
+FS is running
+FS can do I/O
+Device 1 presence: 1
+icode startup
+icode: open /motd
+block cache is good
+superblock is good
+bitmap is good
+alloc_block is good
+file_open is good
+file_get_block is good
+file_flush is good
+file_truncate is good
+file rewrite is good
+icode: read /motd
+This is /motd, the message of the day.
+
+Welcome to the JOS kernel, now with a file system!
+
+icode: close /motd
+icode: spawn /init
+icode: exiting
+init: running
+init: data seems okay
+init: bss seems okay
+init: args: 'init' 'initarg1' 'initarg2'
+init: running sh
+init: starting sh
+$ qemu: terminating on signal 2

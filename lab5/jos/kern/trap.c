@@ -128,8 +128,7 @@ trap_init(void)
   SETGATE(idt[IRQ_OFFSET + IRQ_SPURIOUS], 0, GD_KT, irq_spurious_handler, 3);
   SETGATE(idt[IRQ_OFFSET + IRQ_IDE], 0, GD_KT, irq_ide_handler, 3);
   SETGATE(idt[IRQ_OFFSET + IRQ_ERROR], 0, GD_KT, irq_error_handler, 3);
-  
-  
+   
   // Per-CPU setup 
 	trap_init_percpu();
 }
@@ -273,7 +272,16 @@ trap_dispatch(struct Trapframe *tf)
 
 	// Handle keyboard and serial interrupts.
 	// LAB 5: Your code here.
-	
+  if(tf->tf_trapno == IRQ_OFFSET + IRQ_KBD){
+    kbd_intr();
+    return;
+  }
+
+  if(tf->tf_trapno == IRQ_OFFSET + IRQ_SERIAL){
+    serial_intr();
+    return;
+  }
+  
   // Unexpected trap: The user process or the kernel has a bug.
 	print_trapframe(tf);
 	if (tf->tf_cs == GD_KT)

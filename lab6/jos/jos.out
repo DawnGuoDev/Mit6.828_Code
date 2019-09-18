@@ -1,22 +1,13 @@
-+ cc[USER] net/testoutput.c
-+ cc[USER] net/timer.c
-+ cc[USER] net/input.c
-+ cc[USER] net/output.c
-+ ld obj/net/testoutput
-+ cc[USER] net/testinput.c
-+ ld obj/net/testinput
-+ cc[USER] net/serv.c
-+ ld obj/net/ns
 + ld obj/kern/kernel
 + mk obj/kern/kernel.img
 6828 decimal is 015254 octal!
 Physical memory: 131072K available, base = 640K, extended = 130432K
-need boot_alloc:0x1000 bytes	      nextfree:0xf0302000
-kern_pddir 0xf0302000
-need boot_alloc:0x40000 bytes	      nextfree:0xf0303000
-need boot_alloc:0x1f000 bytes	      nextfree:0xf0343000
-need boot_alloc:0x0 bytes	      nextfree:0xf0362000
-need boot_alloc:0x0 bytes	      nextfree:0xf0362000
+need boot_alloc:0x1000 bytes	      nextfree:0xf035d000
+kern_pddir 0xf035d000
+need boot_alloc:0x40000 bytes	      nextfree:0xf035e000
+need boot_alloc:0x1f000 bytes	      nextfree:0xf039e000
+need boot_alloc:0x0 bytes	      nextfree:0xf03bd000
+need boot_alloc:0x0 bytes	      nextfree:0xf03bd000
 check_page_free_list() succeeded!
 check_page_alloc() succeeded!
 check_page() succeeded!
@@ -24,7 +15,7 @@ boot_map_region UPAGES SUCCESS
 boot_map_region bootstack SUCCESS
 boot_map_region KERNBASE SUCCESS
 check_kern_pgdir() succeeded!
-need boot_alloc:0x0 bytes	      nextfree:0xf0362000
+need boot_alloc:0x0 bytes	      nextfree:0xf03bd000
 check_page_free_list() succeeded!
 check_page_installed_pgdir() succeeded!
 SMP: CPU 0 found 1 CPU(s)
@@ -41,11 +32,10 @@ PCI E1000 status is 0x80080783
 FS is running
 FS can do I/O
 Device 1 presence: 1
-Sending ARP announcement...
 block cache is good
 superblock is good
 bitmap is good
-No runnable environments in the system!
-Welcome to the JOS kernel monitor!
-Type 'help' for a list of commands.
-qemu: terminating on signal 15 from pid 63632
+ns: 52:54:00:12:34:56 bound to static IP 10.0.2.15
+NS: TCP/IP initialized.
+Waiting for http connections...
+qemu: terminating on signal 15 from pid 7346
